@@ -31,3 +31,4 @@ class OpenRelTable {
 };
 
 #endif  // NITCBASE_OPENRELTABLE_H
+

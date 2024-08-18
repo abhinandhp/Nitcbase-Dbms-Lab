@@ -28,7 +28,7 @@ void changeAttName(const char *rel, const char *old, const char *newname)
         printf("  %s: %s\n", attrCatRecord[ATTRCAT_ATTR_NAME_INDEX].sVal, attrType);
         std::cout << " Success\n\n";
         strcpy(attrCatRecord[ATTRCAT_ATTR_NAME_INDEX].sVal, newname);
-        std::cout<<attrCatRecord[ATTRCAT_ATTR_NAME_INDEX].sVal<<"\n";
+        std::cout << attrCatRecord[ATTRCAT_ATTR_NAME_INDEX].sVal << "\n";
         attrCatBuffer.setRecord(attrCatRecord, i);
 
         return;
@@ -37,7 +37,7 @@ void changeAttName(const char *rel, const char *old, const char *newname)
     if (attrCatHeader.rblock == -1)
     {
       std::cout << "Not found\n\n";
-      return; 
+      return;
     }
     attrCatBuffer = RecBuffer(attrCatHeader.rblock);
     attrCatBuffer.getHeader(&attrCatHeader);
@@ -93,7 +93,7 @@ void printAllTable()
           printf("  %s: %s\n", attrCatRecord[ATTRCAT_ATTR_NAME_INDEX].sVal, attrType);
         }
       }
-      
+
       if (attrCatHeader.rblock == -1 || count == total_count)
       {
 
@@ -114,7 +114,27 @@ int main(int argc, char *argv[])
   /* Initialize the Run Copy of Disk */
   Disk disk_run;
   StaticBuffer buffer;
-  // OpenRelTable cache;
+  OpenRelTable cache;
+
+  RelCatEntry *relCatBuf = (RelCatEntry *)malloc(sizeof(RelCatEntry));
+  AttrCatEntry *attrCatBuf = (AttrCatEntry *)malloc(sizeof(AttrCatEntry));
+
+  for (int i = 0; i <= 2; i++)
+  {
+
+    // get the relation catalog entry using
+    RelCacheTable::getRelCatEntry(i, relCatBuf);
+    printf("Relation: %s\n", relCatBuf->relName);
+
+    for (int j = 0; j < relCatBuf->numAttrs; j++)
+    {
+      // get the attribute catalog entry for (rel-id i, attribute offset j)
+      // in attrCatEntry using AttrCacheTable::getAttrCatEntry()
+      AttrCacheTable::getAttrCatEntry(i, j, attrCatBuf);
+
+      printf("  %s: %s\n", attrCatBuf->attrName, attrCatBuf->attrType == 0 ? "NUM" : "STR");
+    }
+  }
 
   /*unsigned char buffer[BLOCK_SIZE];
   Disk::readBlock(buffer, 7000);
@@ -138,9 +158,9 @@ int main(int argc, char *argv[])
 
   return 0;*/
 
-  printAllTable();
-  changeAttName("Students", "Class", "Batch");
-  printAllTable();
+  // printAllTable();
+  // changeAttName("Students", "Class", "Batch");
+  // printAllTable();
 
   return 0;
 
