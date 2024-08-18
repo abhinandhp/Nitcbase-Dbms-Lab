@@ -116,6 +116,9 @@ int main(int argc, char *argv[])
   StaticBuffer buffer;
   OpenRelTable cache;
 
+
+  /*
+
   RelCatEntry *relCatBuf = (RelCatEntry *)malloc(sizeof(RelCatEntry));
   AttrCatEntry *attrCatBuf = (AttrCatEntry *)malloc(sizeof(AttrCatEntry));
 
@@ -135,6 +138,7 @@ int main(int argc, char *argv[])
       printf("  %s: %s\n", attrCatBuf->attrName, attrCatBuf->attrType == 0 ? "NUM" : "STR");
     }
   }
+  */
 
   /*unsigned char buffer[BLOCK_SIZE];
   Disk::readBlock(buffer, 7000);
@@ -162,7 +166,7 @@ int main(int argc, char *argv[])
   // changeAttName("Students", "Class", "Batch");
   // printAllTable();
 
-  return 0;
+ 
 
-  // return FrontendInterface::handleFrontend(argc, argv);
+  return FrontendInterface::handleFrontend(argc, argv);
 }
