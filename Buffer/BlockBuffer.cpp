@@ -16,8 +16,9 @@ int BlockBuffer::getHeader(struct HeadInfo *head)
 {
   unsigned char *bufferPtr;
   int ret = loadBlockAndGetBufferPtr(&bufferPtr);
-  if (ret != SUCCESS) {
-    return ret;   // return any errors that might have occured in the process
+  if (ret != SUCCESS)
+  {
+    return ret; // return any errors that might have occured in the process
   }
 
   unsigned char buffer[BLOCK_SIZE];
@@ -41,10 +42,10 @@ int RecBuffer::getRecord(union Attribute *rec, int slotNum)
 
   unsigned char *bufferPtr;
   int ret = loadBlockAndGetBufferPtr(&bufferPtr);
-  if (ret != SUCCESS) {
+  if (ret != SUCCESS)
+  {
     return ret;
   }
-
 
   struct HeadInfo head;
 
@@ -71,7 +72,6 @@ int RecBuffer::getRecord(union Attribute *rec, int slotNum)
   return SUCCESS;
 }
 
-
 int RecBuffer::setRecord(union Attribute *rec, int slotNum)
 {
   struct HeadInfo head;
@@ -95,19 +95,22 @@ int RecBuffer::setRecord(union Attribute *rec, int slotNum)
 
   // load the record into the rec data structure
   memcpy(slotPointer, rec, recordSize);
-  Disk::writeBlock(buffer,this->blockNum);
+  Disk::writeBlock(buffer, this->blockNum);
 
   return SUCCESS;
 }
 
-int BlockBuffer::loadBlockAndGetBufferPtr(unsigned char **buffPtr) {
+int BlockBuffer::loadBlockAndGetBufferPtr(unsigned char **buffPtr)
+{
   // check whether the block is already present in the buffer using StaticBuffer.getBufferNum()
   int bufferNum = StaticBuffer::getBufferNum(this->blockNum);
 
-  if (bufferNum == E_BLOCKNOTINBUFFER) {
+  if (bufferNum == E_BLOCKNOTINBUFFER)
+  {
     bufferNum = StaticBuffer::getFreeBuffer(this->blockNum);
 
-    if (bufferNum == E_OUTOFBOUND) {
+    if (bufferNum == E_OUTOFBOUND)
+    {
       return E_OUTOFBOUND;
     }
 
@@ -120,3 +123,54 @@ int BlockBuffer::loadBlockAndGetBufferPtr(unsigned char **buffPtr) {
   return SUCCESS;
 }
 
+/* used to get the slotmap from a record block
+NOTE: this function expects the caller to allocate memory for `*slotMap`
+*/
+int RecBuffer::getSlotMap(unsigned char *slotMap)
+{
+  unsigned char *bufferPtr;
+
+  // get the starting address of the buffer containing the block using loadBlockAndGetBufferPtr().
+  int ret = loadBlockAndGetBufferPtr(&bufferPtr);
+  if (ret != SUCCESS)
+  {
+    return ret;
+  }
+
+  struct HeadInfo head;
+  // get the header of the block using getHeader() function
+  this->getHeader(&head);
+
+  int slotCount = head.numSlots;
+
+  // get a pointer to the beginning of the slotmap in memory by offsetting HEADER_SIZE
+  unsigned char *slotMapInBuffer = bufferPtr + HEADER_SIZE;
+
+  // copy the values from `slotMapInBuffer` to `slotMap` (size is `slotCount`)
+  memcpy(slotMap, slotMapInBuffer, slotCount);
+
+  return SUCCESS;
+}
+
+int compareAttrs(Attribute attr1, Attribute attr2, int attrType)
+{
+  if (attrType == NUMBER)
+  {
+    if (attr1.nVal < attr2.nVal)
+    {
+      return -1;
+    }
+    else if (attr1.nVal == attr2.nVal)
+    {
+      return 0;
+    }
+    else
+    {
+      return 1;
+    }
+  }
+  else
+  {
+    return strcmp(attr1.sVal, attr2.sVal);
+  }
+}

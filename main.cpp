@@ -116,7 +116,6 @@ int main(int argc, char *argv[])
   StaticBuffer buffer;
   OpenRelTable cache;
 
-
   /*
 
   RelCatEntry *relCatBuf = (RelCatEntry *)malloc(sizeof(RelCatEntry));
@@ -165,8 +164,6 @@ int main(int argc, char *argv[])
   // printAllTable();
   // changeAttName("Students", "Class", "Batch");
   // printAllTable();
-
- 
 
   return FrontendInterface::handleFrontend(argc, argv);
 }
