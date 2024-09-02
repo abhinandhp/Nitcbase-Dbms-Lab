@@ -201,13 +201,14 @@ int BlockAccess::renameRelation(char oldName[ATTR_SIZE], char newName[ATTR_SIZE]
     //     update the relName field in the record to newName
     //     set back the record using RecBuffer.setRecord
     Attribute attrcatrec[ATTRCAT_NO_ATTRS];
+    RecId searchresId;
     for (int i = 0; i < relCatRecord[RELCAT_NO_ATTRIBUTES_INDEX].nVal; i++)
     {
-        resId = linearSearch(ATTRCAT_RELID, RELCAT_ATTR_RELNAME, oldRelationName, EQ);
-        RecBuffer recbuff(resId.block);
-        recbuff.getRecord(attrcatrec, resId.slot);
+        searchresId = linearSearch(ATTRCAT_RELID, RELCAT_ATTR_RELNAME, oldRelationName, EQ);
+        RecBuffer attrbuff(searchresId.block);
+        attrbuff.getRecord(attrcatrec, searchresId.slot);
         strcpy(attrcatrec[ATTRCAT_REL_NAME_INDEX].sVal, newName);
-        recbuff.setRecord(attrcatrec, resId.slot);
+        attrbuff.setRecord(attrcatrec, searchresId.slot);
     }
 
     return SUCCESS;

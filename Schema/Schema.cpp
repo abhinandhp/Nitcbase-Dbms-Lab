@@ -1,5 +1,4 @@
 #include "Schema.h"
-
 #include <cmath>
 #include <cstring>
 int Schema::openRel(char relName[ATTR_SIZE])
@@ -37,7 +36,7 @@ int Schema::closeRel(char relName[ATTR_SIZE])
     return OpenRelTable::closeRel(relId);
 }
 
-int renameRel(char oldRelName[ATTR_SIZE], char newRelName[ATTR_SIZE])
+int Schema::renameRel(char oldRelName[ATTR_SIZE], char newRelName[ATTR_SIZE])
 {
     // if the oldRelName or newRelName is either Relation Catalog or Attribute Catalog,
     // return E_NOTPERMITTED
